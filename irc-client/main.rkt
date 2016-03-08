@@ -51,10 +51,11 @@
 (struct IrcMessage-Kill IrcMessage ([user : IrcUser] [killed-user : String] [reason : String]) #:transparent)
 (struct IrcMessage-Nick IrcMessage ([user : IrcUser] [new-nick : String]) #:transparent)
 
-(: irc-connect (String Nonnegative-Integer String String String
-                       -> (values IrcConnection (Evtof Semaphore))))
-(define (irc-connect server port nick username real-name)
-  (let-values ([(connection event) (irc:irc-connect server port nick username real-name)])
+(: irc-connect (->* (String Nonnegative-Integer String String String)
+                    (#:ssl Boolean)
+                    (values IrcConnection (Evtof Semaphore))))
+(define (irc-connect server port nick username real-name #:ssl [ssl #f])
+  (let-values ([(connection event) (irc:irc-connect server port nick username real-name #:ssl ssl)])
     (values (IrcConnection connection) event)))
 
 (: irc-join-channel! (IrcConnection String -> Void))
